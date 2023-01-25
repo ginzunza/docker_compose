@@ -1,0 +1,2 @@
+class FakeExample < ApplicationRecord
+end

@@ -1,0 +1,35 @@
+version: '3.4'
+services:
+  web:
+    image: "ghcr.io/rails/cli:latest"
+    command: /bin/bash -c "rm -f /tmp/server.pid && bundle exec rails server -b 0.0.0.0 -P /tmp/server.pid"
+    env_file: .env
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/rails
+      - ruby-bundle-cache:/bundle
+    tty: true
+    stdin_open: true
+
+  redis:
+    image: "redis:7-alpine"
+    ports:
+      - 6379
+    volumes:
+    - ./tmp/redis_data:/var/lib/redis/data
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./tmp/postgres_data:/var/lib/postgresql/data
+
+volumes:
+  ruby-bundle-cache:
+    external: true
